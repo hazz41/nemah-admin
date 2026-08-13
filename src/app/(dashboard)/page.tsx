@@ -5,8 +5,14 @@ import { useQuery } from '@tanstack/react-query';
 import { Store, ChevronRight, CheckCircle2, CircleDollarSign } from 'lucide-react';
 import { getRestaurants } from '@/services/restaurants';
 import { getCurrentMonthSalesByStore } from '@/services/monthlySales';
+import { currentSalesMonth } from '@/lib/salesMonth';
 
-const CURRENT_MONTH_LABEL = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+const MONTH_LABELS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+// Labelled from the same business-timezone month the query below filters on,
+// so the heading can never name a different month than the data under it.
+const { year: CURRENT_YEAR, monthIndex: CURRENT_MONTH_INDEX } = currentSalesMonth();
+const CURRENT_MONTH_LABEL = `${MONTH_LABELS[CURRENT_MONTH_INDEX]} ${CURRENT_YEAR}`;
 
 export default function RestaurantsPage() {
   const { data: restaurants, isLoading } = useQuery({

@@ -1,6 +1,7 @@
 import { collection, doc, getDocs, query, serverTimestamp, updateDoc, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { MonthlySales } from '@/types';
+import { currentSalesMonth } from '@/lib/salesMonth';
 
 function docId(storeId: string, month: string): string {
   return `${storeId}_${month}`;
@@ -40,8 +41,7 @@ export async function getMonthlySalesForStore(storeId: string): Promise<MonthlyS
  * extra fetch per store.
  */
 export async function getCurrentMonthSalesByStore(): Promise<Map<string, MonthlySales>> {
-  const now = new Date();
-  const monthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  const { month: monthKey } = currentSalesMonth();
 
   const salesRef = collection(db, 'monthlySales');
   const q = query(salesRef, where('month', '==', monthKey));
